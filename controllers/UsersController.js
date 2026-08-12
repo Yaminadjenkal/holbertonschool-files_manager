@@ -3,7 +3,8 @@ import sha1 from 'sha1';
 
 class UsersController {
   static async postNew(req, res) {
-    const { email, password } = req.body || {};
+    const email = req.body?.email || req.query?.email;
+    const password = req.body?.password || req.query?.password;
 
     if (!email) {
       return res.status(400).json({ error: 'Missing email' });
