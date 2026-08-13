@@ -12,4 +12,3 @@ router.post('/users', UsersController.postNew);
 router.get('/users', UsersController.postNew);
 
 export default router;
-
