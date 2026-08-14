@@ -1,6 +1,4 @@
-import mongodb from 'mongodb';
-
-const { MongoClient } = mongodb;
+import { MongoClient, ObjectId } from 'mongodb';
 
 class DBClient {
   constructor() {
@@ -9,16 +7,15 @@ class DBClient {
     const database = process.env.DB_DATABASE || 'files_manager';
 
     const url = `mongodb://${host}:${port}`;
+
     this.client = new MongoClient(url, { useUnifiedTopology: true });
     this.db = null;
 
-    this.client.connect()
-      .then(() => {
-        this.db = this.client.db(database);
-      })
-      .catch((err) => {
-        console.error(`MongoDB connection error: ${err.message}`);
-      });
+    this.client.connect().then(() => {
+      this.db = this.client.db(database);
+    }).catch((err) => {
+      console.error('MongoDB connection error:', err);
+    });
   }
 
   isAlive() {
@@ -31,6 +28,10 @@ class DBClient {
 
   async nbFiles() {
     return this.db.collection('files').countDocuments();
+  }
+
+  objectId(id) {
+    return new ObjectId(id);
   }
 }
 
