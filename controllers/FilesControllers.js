@@ -2,8 +2,11 @@ import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import mime from 'mime-types';
+import Queue from 'bull';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
+
+const fileQueue = new Queue('fileQueue');
 
 class FilesController {
   static async postUpload(req, res) {
@@ -63,6 +66,14 @@ class FilesController {
     newFile.localPath = localPath;
 
     const result = await dbClient.db.collection('files').insertOne(newFile);
+
+    // Task 9 — Add job to queue for image thumbnails
+    if (type === 'image') {
+      await fileQueue.add({
+        userId,
+        fileId: result.insertedId.toString(),
+      });
+    }
 
     return res.status(201).json({
       id: result.insertedId.toString(),
@@ -214,12 +225,21 @@ class FilesController {
       return res.status(400).json({ error: "A folder doesn't have content" });
     }
 
-    if (!file.localPath || !fs.existsSync(file.localPath)) {
+    let localPath = file.localPath;
+
+    const { size } = req.query;
+    const validSizes = ['100', '250', '500'];
+
+    if (size && validSizes.includes(size)) {
+      localPath = `${file.localPath}_${size}`;
+    }
+
+    if (!localPath || !fs.existsSync(localPath)) {
       return res.status(404).json({ error: 'Not found' });
     }
 
     const mimeType = mime.lookup(file.name) || 'application/octet-stream';
-    const data = await fs.promises.readFile(file.localPath);
+    const data = await fs.promises.readFile(localPath);
 
     res.setHeader('Content-Type', mimeType);
     return res.status(200).send(data);
