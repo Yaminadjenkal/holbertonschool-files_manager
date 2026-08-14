@@ -28,7 +28,7 @@ class UsersController {
     });
 
     return res.status(201).json({
-      id: result.insertedId,
+      id: result.insertedId.toString(),
       email,
     });
   }
@@ -60,4 +60,4 @@ class UsersController {
   }
 }
 
-export default UsersControlle;
+export default UsersController;
