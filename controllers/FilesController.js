@@ -1,8 +1,8 @@
-import dbClient from '../utils/db';
-import redisClient from '../utils/redis';
-import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
+import dbClient from '../utils/db';
+import redisClient from '../utils/redis';
 
 class FilesController {
   static async postUpload(req, res) {
@@ -109,6 +109,7 @@ class FilesController {
     }
 
     const fileId = req.params.id;
+
     const file = await dbClient.db.collection('files').findOne({
       _id: dbClient.objectId(fileId),
       userId: dbClient.objectId(userId),
