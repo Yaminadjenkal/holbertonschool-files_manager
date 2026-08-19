@@ -9,11 +9,12 @@
     "start-worker": "nodemon --exec babel-node worker.js"
   },
   "dependencies": {
+    "bull": "^3.22.0",
     "express": "^4.17.1",
+    "image-thumbnail": "^1.0.17",
+    "mime-types": "^2.1.27",
     "mongodb": "^3.6.3",
     "redis": "^2.8.0",
-    "bull": "^3.22.0",
-    "mime-types": "^2.1.27",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
@@ -23,4 +24,3 @@
     "nodemon": "^2.0.4"
   }
 }
-
